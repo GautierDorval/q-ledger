@@ -14,3 +14,9 @@ This project is designed to process raw HTTP logs. Treat the following as sensit
 - any output that could re-identify individuals.
 
 Default `.gitignore` is configured to avoid committing those files.
+
+## Do not submit secrets
+Never commit:
+- raw edge logs (IP addresses, full user agents, request IDs),
+- salts, keys, tokens, credentials,
+- private configuration files.

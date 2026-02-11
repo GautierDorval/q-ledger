@@ -102,6 +102,7 @@ Only **aggregated / derived** evidence should be emitted publicly.
 
 Choose a license that matches your intent (MIT/Apache-2.0 for wide adoption, or a more restrictive license if needed).  
 See `LICENSE` for the current selection.
+Licensed under the Apache License 2.0. See `LICENSE` and `NOTICE`.
 
 ---
 

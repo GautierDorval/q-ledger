@@ -1,85 +1,110 @@
-# Q‑Ledger
+# Q-Ledger
 
-> **Q‑Ledger** est un *observational ledger* (registre d’observabilité) dérivé de logs HTTP (ex: Cloudflare Log Search) afin de rendre **mesurable, reproductible et contestable** le comportement de lecture des artefacts de gouvernance publiés sur un site (fichiers `/.well-known/*`, manifeste, contraintes, ontologie, etc.).
+Q-Ledger is a machine-first, log-derived ledger format used to publish **verifiable governance snapshots** (entrypoints + derived metrics) from edge request observation.  
+It is designed to reduce interpretive drift by making governance artifacts **discoverable, traceable, and chain-linked** over time—without exposing raw logs.
 
-Ce dépôt contient une **implémentation de référence** en Python (mode “pipeline manuel”) qui :
+> Scope: **observation, not attestation**.  
+> Q-Ledger does not prove identity, authorship, or intent. It only publishes structured evidence derived from server/edge request visibility.
 
-- ingère un export CSV Cloudflare,
-- infère des *sessions* par fingerprint pseudonymisé (IP + UA + sel),
-- produit un ledger chaîné (hash SHA‑256 + `previous_ledger_hash_sha256`) en **JSON + YAML**,
-- génère des métriques dérivées :
-  - `out/metrics.md` (legacy),
-  - `out/q-metrics.json` + `out/q-metrics.yml` (Q‑Metrics, non‑normatif).
+---
 
-## Ce que Q‑Ledger n’est pas
+## What Q-Ledger is
 
-- **Pas une preuve d’identité** : aucune revendication “ce modèle = X”.  
-- **Pas une preuve cryptographique** : pas d’attestation sans un protocole séparé (voir `q-attest`).
-- **Pas un mécanisme d’autorisation** : ce n’est *pas* un “permis” de réponse, mais de l’observabilité.
+- An **append-only** publication format (JSON + YAML) for governance entrypoints.
+- A **chain-linked** sequence using `previous_ledger_hash_sha256` to make silent edits detectable.
+- A way to publish:
+  - what was observed as requested at the edge (derived from logs), and
+  - a minimal set of integrity and stability signals (“Q-Metrics”).
 
-## Démarrage rapide (manuel)
+## What Q-Ledger is not
 
-### 1) Pré‑requis
+- Not a security attestation system.
+- Not a cryptographic identity proof.
+- Not a replacement for signed releases, certificates, or transparency logs.
+- Not a recommendation engine or a compliance claim.
 
-- Python 3.10+ (3.11 conseillé)
-- `pip install -r requirements.txt`
-- Définir un sel **secret** :
+---
 
-```bash
-export Q_LEDGER_SALT="une_chaine_aleatoire_longue"
-```
+## Files and endpoints
 
-> ⚠️ **Ne jamais committer** ce sel. Rotater si compromis.
-
-### 2) Export Cloudflare
-
-- Cloudflare Log Search
-- Fenêtre : last 24h (quotidien) ou last 48h
-- Export : CSV  
-- Placer le fichier dans `input/cloudflare_logs.csv`
-
-### 3) Construire le ledger + métriques
-
-```bash
-python scripts/build_ledger.py
-python scripts/metrics.py out/q-ledger.json out/metrics.md
-python scripts/summary_7d.py  # optionnel
-```
-
-### 4) Publier (option WordPress “Virtual Files”)
-
-Le workflow fourni inclut des scripts PowerShell (`scripts/publish.ps1`) pour copier-coller le contenu vers :
+A typical deployment publishes machine-readable endpoints such as:
 
 - `/.well-known/q-ledger.json`
 - `/.well-known/q-ledger.yml`
 - `/.well-known/q-metrics.json`
 - `/.well-known/q-metrics.yml`
 
-Voir `RUNBOOK.md`.
-
-## Sécurité & vie privée (important)
-
-- **NE PAS publier** :
-  - `input/` et `exports/` (IPs + User‑Agents),
-  - `cle.txt` / `.env` / tokens / clés,
-  - un `.venv/` versionné.
-- Le ledger dérivé contient un `client_fingerprint_hash` **pseudonymisé**.  
-  Même pseudonymisé, cela peut rester “donnée personnelle” selon le contexte : publier en connaissance de cause.
-
-## Structure recommandée des dépôts
-
-Pour éviter les erreurs :
-
-- `q-ledger` (code + spec + docs) → public
-- `q-ledger-archive` (uniquement sorties dérivées : q-ledger + q-metrics) → public *ou* privé selon vos contraintes
-- logs bruts → **privé / local uniquement**
-
-## Licence
-
-Choisir une licence (MIT / Apache‑2.0 / …) avant publication.
+These are intended to be public, cacheable, and easy to crawl.
 
 ---
 
-### English (one‑liner)
+## Data model (high level)
 
-Q‑Ledger is a log‑derived observational governance ledger (JSON+YAML) with chained integrity hashes and non‑normative derived metrics (Q‑Metrics).
+Q-Ledger entries usually include:
+
+- **Observed requests** (aggregated): method, path, status, timestamps, host.
+- **Entrypoint coverage**: whether expected governance entrypoints were observed.
+- **Chain linkage**: current hash + previous hash for continuity.
+- **Derived signals (Q-Metrics)**: basic stability/compliance indicators computed from the ledger.
+
+This repository contains:
+- scripts to build and update the ledger,
+- documentation for the format and operational workflow,
+- redacted examples (no raw logs, no IPs, no secrets).
+
+---
+
+## Quick start
+
+### 1) Requirements
+- Python 3.10+ (recommended)
+- Access to edge logs (e.g., Cloudflare logs export) **stored locally**
+- A private salt/secret used only for hashing/normalization
+
+### 2) Configure
+Copy and edit the example config:
+
+- `config/example.env` → `.env` (do **not** commit)
+- `config/example.com.yml` → `config/<your-domain>.yml`
+
+### 3) Build ledger
+Run the main builder script (see `scripts/`):
+
+- Build/update `q-ledger`
+- Compute `q-metrics`
+- Output JSON + YAML files ready to publish under `/.well-known/`
+
+> See `RUNBOOK.md` for the recommended operational workflow and publishing steps.
+
+---
+
+## Privacy and safety
+
+This project is intentionally designed to avoid publishing:
+- raw logs,
+- IP addresses,
+- full user agents,
+- internal IDs or tokens.
+
+Only **aggregated / derived** evidence should be emitted publicly.
+
+---
+
+## Roadmap
+
+- `q-attest` (optional future layer): signed attestations over published ledger snapshots
+- schema validation (JSON Schema) + conformance labels
+- automated archive publisher (GitHub Actions) for daily snapshotting
+
+---
+
+## License
+
+Choose a license that matches your intent (MIT/Apache-2.0 for wide adoption, or a more restrictive license if needed).  
+See `LICENSE` for the current selection.
+
+---
+
+## Status
+
+Experimental. The format is stable enough for real deployments, but expect iterative improvements to scripts and documentation.

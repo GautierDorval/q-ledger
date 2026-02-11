@@ -1,0 +1,35 @@
+# Secrets / env
+.env
+*.env
+config/*.env
+config/**/.env
+
+# Keys / salts / local secrets
+*cle*.txt
+*key*.txt
+*secret*.txt
+*salt*.txt
+
+# Raw logs / exports
+logs/
+raw/
+exports/
+*.csv
+*.jsonl
+*.ndjson
+*.parquet
+*.gz
+*.zip
+
+# Local python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.envrc
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

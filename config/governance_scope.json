@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "0.1.0",
+  "type": "GovernanceScopeConfig",
+  "site": "https://example.com/",
+  "window_days": 7,
+  "session_window_minutes": 30,
+  "filters": {
+    "methods": [
+      "GET"
+    ],
+    "status_allowlist": [
+      200,
+      304
+    ],
+    "strip_query": true,
+    "strip_fragment": true
+  },
+  "layers": {
+    "entrypoints": [
+      "/.well-known/ai-governance.json",
+      "/ai-manifest.json"
+    ],
+    "policy": [
+      "/.well-known/interpretation-policy.json"
+    ],
+    "q_layer": [
+      "/response-legitimacy.md",
+      "/response-legitimacy.yaml"
+    ],
+    "canon_identity_boundaries": [
+      "/canon.md",
+      "/identity.json",
+      "/services-non-publics.md"
+    ],
+    "constraints": [
+      "/non-goals.md",
+      "/negative-definitions.md",
+      "/output-constraints.md",
+      "/data-handling.md",
+      "/common-misinterpretations.json",
+      "/claims.json"
+    ],
+    "routing_discovery": [
+      "/semantic-router.json",
+      "/llm-intent-map.json",
+      "/llms.txt",
+      "/llms-full.txt",
+      "/readme.llm.txt"
+    ],
+    "ontology": [
+      "/datasets.jsonld",
+      "/entity-graph.jsonld",
+      "/semantic-schema-index.jsonld",
+      "/relationships.jsonld",
+      "/entity-relations.md",
+      "/relationships.jsonld"
+    ],
+    "ontology_fallback": [
+      "/datasets.yaml",
+      "/entity-graph.yaml",
+      "/semantic-schema-index.yaml"
+    ],
+    "index": [
+      "/dualweb-index.md"
+    ],
+    "observation": [
+      "/.well-known/q-ledger.json",
+      "/.well-known/q-ledger.yml",
+      "/.well-known/q-attest-protocol.md",
+      "/.well-known/q-metrics.json",
+      "/.well-known/q-metrics.yml"
+    ],
+    "traceability": [
+      "/citations.md",
+      "/changelog-ai.md"
+    ],
+    "reporting": [
+      "/reporting/interpretation-issue.json"
+    ]
+  },
+  "human_content_prefixes": [
+    "/",
+    "/interpretation/",
+    "/doctrine/",
+    "/definitions/",
+    "/expertise/",
+    "/clarifications/",
+    "/metrics/"
+  ],
+  "expected_sequences": [
+    {
+      "id": "seq-0001",
+      "name": "Entrypoint-first governed discovery",
+      "pattern": [
+        "entrypoints",
+        "policy",
+        "constraints",
+        "index",
+        "content"
+      ],
+      "notes": "Pattern de référence. La fidélité mesure le taux de match, pas la conformité."
+    }
+  ]
+}

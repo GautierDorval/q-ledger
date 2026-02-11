@@ -1,0 +1,71 @@
+{
+  "site": "https://example.com/",
+  "site_host": "example.com",
+  "fingerprint_salt_env": "Q_LEDGER_SALT",
+  "session_gap_minutes": 30,
+  "allow_methods": [
+    "GET"
+  ],
+  "allow_status": [
+    "200",
+    "304"
+  ],
+  "governance_scope_config": "config/governance_scope.json",
+  "governance_paths": [
+    "/.well-known/ai-governance.json",
+    "/ai-governance.json",
+    "/ai-manifest.json",
+    "/dualweb-index.md",
+    "/.well-known/interpretation-policy.json",
+    "/response-legitimacy.md",
+    "/response-legitimacy.yaml",
+    "/canon.md",
+    "/identity.json",
+    "/services-non-publics.md",
+    "/non-goals.md",
+    "/negative-definitions.md",
+    "/output-constraints.md",
+    "/data-handling.md",
+    "/common-misinterpretations.json",
+    "/claims.json",
+    "/semantic-router.json",
+    "/llm-intent-map.json",
+    "/llms.txt",
+    "/llms-full.txt",
+    "/readme.llm.txt",
+    "/datasets.jsonld",
+    "/entity-graph.jsonld",
+    "/semantic-schema-index.jsonld",
+    "/relationships.jsonld",
+    "/entity-relations.md",
+    "/datasets.yaml",
+    "/entity-graph.yaml",
+    "/semantic-schema-index.yaml",
+    "/.well-known/q-ledger.json",
+    "/.well-known/q-ledger.yml",
+    "/.well-known/q-attest-protocol.md",
+    "/.well-known/q-metrics.json",
+    "/.well-known/q-metrics.yml",
+    "/reporting/interpretation-issue.json",
+    "/citations.md",
+    "/changelog-ai.md"
+  ],
+  "input": {
+    "csv_path": "input/cloudflare_logs.csv",
+    "columns": {
+      "timestamp": "edgestarttimestamp",
+      "ip": "clientip",
+      "ua": "clientrequestuseragent",
+      "path": "clientrequestpath",
+      "host": "clientrequesthost",
+      "method": "clientrequestmethod",
+      "status": "edgeresponsestatus"
+    }
+  },
+  "export_window": "manual",
+  "output": {
+    "json": "out/q-ledger.json",
+    "yaml": "out/q-ledger.yml",
+    "latest_json": "out/q-ledger-latest.json"
+  }
+}

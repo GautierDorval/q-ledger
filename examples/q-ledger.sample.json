@@ -1,0 +1,93 @@
+{
+  "ledger_version": "1.1",
+  "ledger_sequence": 1,
+  "site": "https://example.com/",
+  "generated_utc": "2026-01-01T00:00:00Z",
+  "method": {
+    "name": "ledger-derived-from-logs",
+    "version": "session-inference-1.5",
+    "session_gap_minutes": 30,
+    "notes": "sessions inferees a partir de logs; aucune identite de modele n'est affirmee"
+  },
+  "export_window": "example",
+  "attestations_validated": [],
+  "integrity": {
+    "previous_ledger_hash_sha256": null,
+    "canonicalization": "json(sort_keys=true,separators=(',',':'))",
+    "content_hash_sha256": "REDACTED"
+  },
+  "sessions_inferred": [
+    {
+      "session_id": "example-session-01",
+      "window_utc": {
+        "start": "2026-01-01T00:01:00Z",
+        "end": "2026-01-01T00:01:10Z"
+      },
+      "client_fingerprint_hash": "REDACTED",
+      "confidence": 0.55,
+      "path": [
+        "/entity-relations.md"
+      ],
+      "path_categories": [
+        "ontology"
+      ],
+      "signals": [
+        "governance_path_hit"
+      ],
+      "agent_classification": {
+        "confidence_level": "low",
+        "primary_signal": "single_governance_hit",
+        "human_readable_hypothesis": "hypothese faible",
+        "warning": "aucune preuve cryptographique d'identite"
+      }
+    },
+    {
+      "session_id": "example-session-02",
+      "window_utc": {
+        "start": "2026-01-01T00:02:00Z",
+        "end": "2026-01-01T00:02:10Z"
+      },
+      "client_fingerprint_hash": "REDACTED",
+      "confidence": 0.55,
+      "path": [
+        "/data-handling.md"
+      ],
+      "path_categories": [
+        "constraints"
+      ],
+      "signals": [
+        "governance_path_hit"
+      ],
+      "agent_classification": {
+        "confidence_level": "low",
+        "primary_signal": "single_governance_hit",
+        "human_readable_hypothesis": "hypothese faible",
+        "warning": "aucune preuve cryptographique d'identite"
+      }
+    },
+    {
+      "session_id": "example-session-03",
+      "window_utc": {
+        "start": "2026-01-01T00:03:00Z",
+        "end": "2026-01-01T00:03:10Z"
+      },
+      "client_fingerprint_hash": "REDACTED",
+      "confidence": 0.55,
+      "path": [
+        "/ai-governance.json"
+      ],
+      "path_categories": [
+        "other"
+      ],
+      "signals": [
+        "governance_path_hit"
+      ],
+      "agent_classification": {
+        "confidence_level": "low",
+        "primary_signal": "single_governance_hit",
+        "human_readable_hypothesis": "hypothese faible",
+        "warning": "aucune preuve cryptographique d'identite"
+      }
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "schemaVersion": "0.1.0",
+  "type": "QMetrics",
+  "site": "https://example.com/",
+  "canonical": "https://example.com/.well-known/q-metrics.json",
+  "derived_from": [
+    "https://example.com/.well-known/q-ledger.json"
+  ],
+  "purpose": "Publish non-normative, derived observability metrics from Q-Ledger to make interpretive governance behavior measurable, reproducible, and contestable. This file does not grant response authorization and does not define truth. Q-Layer remains authoritative for response legitimacy.",
+  "non_normative_notice": "Metrics are descriptive. They must not be treated as authorization, compliance, certification, or guarantees.",
+  "disclosure_token": "GD-IG-GOVERNED",
+  "metric_config": {
+    "time_window_days": 7,
+    "session_window_minutes": 30,
+    "expected_pattern_used": [
+      "entrypoint",
+      "constraints",
+      "ontology"
+    ]
+  },
+  "metrics": {
+    "window": {
+      "start_date": "2026-01-01",
+      "end_date": "2026-01-01",
+      "generated_at_utc": "2026-01-01T00:00:00Z"
+    },
+    "counts": {
+      "sessions_inferred_total": 25,
+      "sessions_with_entrypoint_first": 3,
+      "sessions_with_constraints_touched": 6,
+      "sessions_escaped": 21,
+      "sessions_matching_expected_sequence": 2
+    },
+    "rates": {
+      "entry_compliance_rate": 0.12,
+      "constraint_touch_rate": 0.24,
+      "escape_rate": 0.84,
+      "sequence_fidelity": 0.08
+    },
+    "notes": [
+      "All values are derived from observational logs and are weak evidence only.",
+      "If Q-Ledger is unavailable, these metrics must be treated as unavailable.",
+      "Canon identity/boundary files are treated as constraints for constraint touch and sequence fidelity.",
+      "Escape rate is computed in governance-only mode unless human content is included in the ledger scope.",
+      "Sequence fidelity computed in governance-only mode (content not observed or not included)."
+    ]
+  },
+  "traceability": {
+    "q_ledger": "https://gautierdorval.com/.well-known/q-ledger.json",
+    "q_ledger_yaml": "https://gautierdorval.com/.well-known/q-ledger.yml",
+    "q_attest_protocol": "https://gautierdorval.com/.well-known/q-attest-protocol.md",
+    "changelog": "https://gautierdorval.com/changelog-ai.md"
+  },
+  "last_reviewed": "2026-02-06",
+  "stability": "high"
+}

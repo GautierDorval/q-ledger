@@ -1,0 +1,26 @@
+{
+  "generated_utc": "2026-02-17T00:00:00Z",
+  "ledger_sequence": 1,
+  "hash": "112c2f379ed71659620ff35646e5affb52db2a9064dcd12f612b6c7146d7e2f7",
+  "previous_hash": null,
+  "sessions_total": 1,
+  "single_hit_ratio": 1.0,
+  "mean_hits_per_session": 1.0,
+  "distinct_paths_total": 1,
+  "regime": "other_low_data",
+  "regime_rationale": "sessions_total < 5",
+  "top_revisits": [],
+  "motifs": {
+    "yaml_then_ledger": 0,
+    "yaml_then_protocol": 0,
+    "ledger_then_protocol": 0,
+    "gov_content_gov": 0
+  },
+  "revisit_deltas_seconds": {
+    "count": 0,
+    "min": null,
+    "median": null,
+    "p90": null,
+    "max": null
+  }
+}

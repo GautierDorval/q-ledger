@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/GautierDorval/q-ledger/main/schemas/q-ledger.schema.json",
+  "title": "Q-Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ledger_version",
+    "ledger_sequence",
+    "site",
+    "generated_utc",
+    "method",
+    "export_window",
+    "sessions_inferred",
+    "attestations_validated",
+    "integrity"
+  ],
+  "properties": {
+    "ledger_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$"
+    },
+    "ledger_sequence": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "site": {
+      "type": "string",
+      "format": "uri"
+    },
+    "generated_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "version",
+        "session_gap_minutes",
+        "notes"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "session_gap_minutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "export_window": {
+      "type": "string"
+    },
+    "input_stats": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rows_total",
+        "rows_loaded",
+        "rows_skipped"
+      ],
+      "properties": {
+        "rows_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows_loaded": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rows_skipped": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "sessions_inferred": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "session_id",
+          "start_utc",
+          "end_utc",
+          "client_fingerprint_hash",
+          "confidence",
+          "confidence_label",
+          "hit_count",
+          "path",
+          "signals",
+          "agent_classification"
+        ],
+        "properties": {
+          "session_id": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          },
+          "start_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_utc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "client_fingerprint_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{24}$"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "confidence_label": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "hit_count": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "path": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            }
+          },
+          "agent_classification": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "confidence_level",
+              "primary_signal"
+            ],
+            "properties": {
+              "confidence_level": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              },
+              "primary_signal": {
+                "type": "string",
+                "enum": [
+                  "yaml_preference",
+                  "governance_sequence",
+                  "single_governance_hit",
+                  "unknown"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "attestations_validated": {
+      "type": "array"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "previous_ledger_hash_sha256",
+        "canonicalization",
+        "content_hash_sha256"
+      ],
+      "properties": {
+        "previous_ledger_hash_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "canonicalization": {
+          "type": "string"
+        },
+        "content_hash_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

@@ -1,29 +1,54 @@
-# Modèle de données (résumé)
+# Data model
 
-## q-ledger (ledger_version 1.1)
+Ce document est une vue d’ensemble lisible par humain. La référence machine‑first est dans :
 
-Champs clés (vue d’ensemble) :
+- `schemas/q-ledger.schema.json`
+- `schemas/q-metrics.schema.json`
 
-- `ledger_version` : version du format
-- `ledger_sequence` : compteur monotone (persisté dans `state/ledger-state.json`)
-- `generated_utc` : horodatage de génération
-- `sessions_inferred[]` : sessions inférées à partir des logs filtrés
-  - `session_id` : identifiant déterministe (hash) basé sur le fingerprint + fenêtre temporelle
-  - `window_utc.start/end`
-  - `client_fingerprint_hash` : hash SHA‑256 de `ip|ua|salt` (tronqué)
-  - `path[]` : chemins observés
-  - `path_categories[]` : catégories issues de `config/governance_scope.json`
-  - `signals[]` : signaux faibles (yaml_accessed, path_revisited, …)
-  - `agent_classification` : hypothèse non‑probante
+## Q‑Ledger
 
-- `integrity.content_hash_sha256` : hash SHA‑256 du ledger canonique (JSON trié)
-- `integrity.previous_ledger_hash_sha256` : hash précédent (chaînage)
+Un fichier Q‑Ledger est un snapshot append‑only, chaîné par hash.
 
-## q-metrics (schemaVersion 0.1.0)
+Champs racine (résumé) :
 
-- `purpose` et `non_normative_notice` : garde‑fous explicites
-- `metrics.counts` : compteurs dérivés (sessions, entrypoint first, constraints touched…)
-- `metrics.rates` : taux dérivés (entry compliance, escape rate, sequence fidelity…)
-- `traceability` : liens vers Q‑Ledger, Q‑Attest, changelog
+- `ledger_version` : version du format (ex. `1.1`)
+- `ledger_sequence` : compteur monotone
+- `site` : base URL du site observé
+- `generated_utc` : timestamp ISO 8601
+- `method` : méta de génération (pipeline, version, paramètres)
+- `export_window` : fenêtre d’observation (ex. `manual`)
+- `input_stats` : statistiques d’ingestion (lignes CSV total/chargées/ignorées)
+- `sessions_inferred[]` : sessions inférées à partir des logs
+- `integrity` : chaînage (`previous_ledger_hash_sha256`) + hash canonique
 
-> Objectif : publier des métriques **descriptives** qui rendent l’observabilité exploitable, sans prétendre à une conformité.
+### sessions_inferred[]
+
+Chaque session est un artefact **dérivé** :
+
+- `session_id` : identifiant court
+- `start_utc`, `end_utc` : fenêtre de session
+- `client_fingerprint_hash` : hash salé (pseudonyme, non‑réversible)
+- `hit_count` : nombre de hits dans la session
+- `path[]` : chemins observés (normalisés)
+- `signals[]` : signaux d’inférence de session (ex. `yaml_preference`)
+- `confidence` : score de confiance (0.0 à 1.0)
+- `confidence_label` : `low | medium | high`
+- `agent_classification` : résumé explicite de la classification (`confidence_level`, `primary_signal`)
+
+## Q‑Metrics
+
+Un fichier Q‑Metrics est un dérivé agrégé de Q‑Ledger, destiné à être consommé par des agents et des auditeurs.
+
+Champs principaux :
+
+- `metrics.entry_compliance_rate`
+- `metrics.constraint_touch_rate`
+- `metrics.escape_rate`
+- `metrics.sequence_fidelity`
+
+Champs de traçabilité :
+
+- `canonical` : URL canonique du fichier Q‑Metrics
+- `derived_from[]` : source(s) Q‑Ledger
+- `traceability` : URLs de référence (Q‑Ledger, Q‑Metrics YAML, protocole, changelog, etc.)
+- `disclosure_token` : marqueur d’intention (voir `docs/disclosure-token.md`)

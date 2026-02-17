@@ -1,7 +1,7 @@
 # Roadmap (proposition)
 
 ## 1) Stabiliser le format
-- Publier un JSON Schema pour `q-ledger` et `q-metrics`
+- [x] Publier un JSON Schema pour `q-ledger` et `q-metrics` (voir `schemas/`)
 - Versionner explicitement (`ledger_version`, `schemaVersion`)
 
 ## 2) Séparer observation vs attestation

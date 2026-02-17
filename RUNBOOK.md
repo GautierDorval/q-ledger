@@ -35,7 +35,15 @@
 - Paste into:
   - /.well-known/q-ledger.json
   - /.well-known/q-ledger.yml
+  - /.well-known/q-metrics.json
+  - /.well-known/q-metrics.yml
 
-## Step 8 — Verify public endpoints
+## Step 8 — Verify publication (automated)
+- Run: .\scripts\verify-publication.ps1
+- This re-fetches the public endpoints and compares canonical hashes vs your local outputs.
+
+## Step 9 — Manual spot-check (optional)
 - https://example.com/.well-known/q-ledger.json
 - https://example.com/.well-known/q-ledger.yml
+- https://example.com/.well-known/q-metrics.json
+- https://example.com/.well-known/q-metrics.yml

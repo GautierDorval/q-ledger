@@ -60,12 +60,35 @@
       "host": "clientrequesthost",
       "method": "clientrequestmethod",
       "status": "edgeresponsestatus"
-    }
+    },
+    "format": "cloudflare_csv"
   },
   "export_window": "manual",
   "output": {
     "json": "out/q-ledger.json",
     "yaml": "out/q-ledger.yml",
     "latest_json": "out/q-ledger-latest.json"
+  },
+  "__template__": true,
+  "__note__": "Template. Copy to config/config.local.json and edit. This file is safe to commit.",
+  "q_metrics": {
+    "disclosure_token": "Q-LEDGER-DISCLOSED",
+    "q_attest_protocol_path": "/.well-known/q-attest-protocol.md",
+    "changelog_path": "/changelog-ai.md",
+    "q_ledger_json_path": "/.well-known/q-ledger.json",
+    "q_ledger_yaml_path": "/.well-known/q-ledger.yml",
+    "q_metrics_json_path": "/.well-known/q-metrics.json",
+    "q_metrics_yaml_path": "/.well-known/q-metrics.yml"
+  },
+  "publication": {
+    "base_url": "https://example.com",
+    "endpoints": {
+      "q_ledger_json": "/.well-known/q-ledger.json",
+      "q_ledger_yml": "/.well-known/q-ledger.yml",
+      "q_metrics_json": "/.well-known/q-metrics.json",
+      "q_metrics_yml": "/.well-known/q-metrics.yml"
+    },
+    "timeout_seconds": 10,
+    "user_agent": "q-ledger-verifier/0.1.1"
   }
 }

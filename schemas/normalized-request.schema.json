@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/GautierDorval/q-ledger/main/schemas/normalized-request.schema.json",
+  "title": "NormalizedRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "ts",
+    "method",
+    "path",
+    "status"
+  ],
+  "properties": {
+    "ts": {
+      "type": "string",
+      "description": "Timestamp (ISO 8601). Prefer UTC with Z suffix.",
+      "format": "date-time"
+    },
+    "host": {
+      "type": "string",
+      "description": "HTTP Host (if available)."
+    },
+    "method": {
+      "type": "string",
+      "description": "HTTP method (GET, POST, ...).",
+      "pattern": "^[A-Z]{3,10}$"
+    },
+    "path": {
+      "type": "string",
+      "description": "Request path only (no scheme/host). Should start with '/'.",
+      "pattern": "^/.*$"
+    },
+    "status": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "ip": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Client IP (optional).",
+      "minLength": 3
+    },
+    "user_agent": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "User-Agent string (optional)."
+    },
+    "provider": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Log provider / adapter name (optional)."
+    },
+    "request_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Provider-specific request ID (optional)."
+    }
+  }
+}

@@ -2,92 +2,45 @@
   "ledger_version": "1.1",
   "ledger_sequence": 1,
   "site": "https://example.com/",
-  "generated_utc": "2026-01-01T00:00:00Z",
+  "generated_utc": "2026-02-17T00:00:00Z",
   "method": {
     "name": "ledger-derived-from-logs",
     "version": "session-inference-1.5",
     "session_gap_minutes": 30,
-    "notes": "sessions inferees a partir de logs; aucune identite de modele n'est affirmee"
+    "notes": "sessions inferred from logs; no model identity is asserted"
   },
-  "export_window": "example",
+  "export_window": "manual",
+  "input_stats": {
+    "rows_total": 1,
+    "rows_loaded": 1,
+    "rows_skipped": 0
+  },
+  "sessions_inferred": [
+    {
+      "session_id": "a1b2c3d4e5f60718",
+      "start_utc": "2026-02-16T23:40:00Z",
+      "end_utc": "2026-02-16T23:41:00Z",
+      "client_fingerprint_hash": "0123456789abcdef01234567",
+      "confidence": 0.55,
+      "confidence_label": "medium",
+      "hit_count": 1,
+      "path": [
+        "/.well-known/ai-governance.json"
+      ],
+      "signals": [
+        "governance_hit",
+        "single_hit_cap_applied"
+      ],
+      "agent_classification": {
+        "confidence_level": "medium",
+        "primary_signal": "single_governance_hit"
+      }
+    }
+  ],
   "attestations_validated": [],
   "integrity": {
     "previous_ledger_hash_sha256": null,
     "canonicalization": "json(sort_keys=true,separators=(',',':'))",
-    "content_hash_sha256": "REDACTED"
-  },
-  "sessions_inferred": [
-    {
-      "session_id": "example-session-01",
-      "window_utc": {
-        "start": "2026-01-01T00:01:00Z",
-        "end": "2026-01-01T00:01:10Z"
-      },
-      "client_fingerprint_hash": "REDACTED",
-      "confidence": 0.55,
-      "path": [
-        "/entity-relations.md"
-      ],
-      "path_categories": [
-        "ontology"
-      ],
-      "signals": [
-        "governance_path_hit"
-      ],
-      "agent_classification": {
-        "confidence_level": "low",
-        "primary_signal": "single_governance_hit",
-        "human_readable_hypothesis": "hypothese faible",
-        "warning": "aucune preuve cryptographique d'identite"
-      }
-    },
-    {
-      "session_id": "example-session-02",
-      "window_utc": {
-        "start": "2026-01-01T00:02:00Z",
-        "end": "2026-01-01T00:02:10Z"
-      },
-      "client_fingerprint_hash": "REDACTED",
-      "confidence": 0.55,
-      "path": [
-        "/data-handling.md"
-      ],
-      "path_categories": [
-        "constraints"
-      ],
-      "signals": [
-        "governance_path_hit"
-      ],
-      "agent_classification": {
-        "confidence_level": "low",
-        "primary_signal": "single_governance_hit",
-        "human_readable_hypothesis": "hypothese faible",
-        "warning": "aucune preuve cryptographique d'identite"
-      }
-    },
-    {
-      "session_id": "example-session-03",
-      "window_utc": {
-        "start": "2026-01-01T00:03:00Z",
-        "end": "2026-01-01T00:03:10Z"
-      },
-      "client_fingerprint_hash": "REDACTED",
-      "confidence": 0.55,
-      "path": [
-        "/ai-governance.json"
-      ],
-      "path_categories": [
-        "other"
-      ],
-      "signals": [
-        "governance_path_hit"
-      ],
-      "agent_classification": {
-        "confidence_level": "low",
-        "primary_signal": "single_governance_hit",
-        "human_readable_hypothesis": "hypothese faible",
-        "warning": "aucune preuve cryptographique d'identite"
-      }
-    }
-  ]
+    "content_hash_sha256": "112c2f379ed71659620ff35646e5affb52db2a9064dcd12f612b6c7146d7e2f7"
+  }
 }

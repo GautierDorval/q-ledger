@@ -100,5 +100,7 @@
       ],
       "notes": "Pattern de référence. La fidélité mesure le taux de match, pas la conformité."
     }
-  ]
+  ],
+  "__template__": true,
+  "__note__": "Template. Copy to config/governance_scope.local.json and edit. This file is safe to commit."
 }

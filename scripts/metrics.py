@@ -305,9 +305,10 @@ def map_canon_to_constraints_for_checks(cats: List[str]) -> List[str]:
     return out
 
 
-def compute_q_metrics(ledger: Dict[str, Any], scope: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+def compute_q_metrics(ledger: Dict[str, Any], scope: Optional[Dict[str, Any]], cfg: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     sessions = ledger.get("sessions_inferred", [])
     generated = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    cfg = cfg or {}
 
     # Determine window from ledger sessions
     starts: List[datetime] = []
@@ -423,17 +424,47 @@ def compute_q_metrics(ledger: Dict[str, Any], scope: Optional[Dict[str, Any]]) -
     if governance_only_mode:
         notes.append("Sequence fidelity computed in governance-only mode (content not observed or not included).")
 
+
+    # --- Canonical URLs (no hardcoded domains) ---
+    site_base = normalize_site_base(ledger.get("site") or cfg.get("site", ""))
+    site_url = (site_base + "/") if site_base else (ledger.get("site") or cfg.get("site", ""))
+
+    qcfg = cfg.get("q_metrics", {}) if isinstance(cfg, dict) else {}
+    disclosure_token = (
+        os.getenv("Q_LEDGER_DISCLOSURE_TOKEN", "").strip()
+        or qcfg.get("disclosure_token")
+        or "Q-LEDGER-DISCLOSED"
+    )
+
+    q_ledger_json_path = qcfg.get("q_ledger_json_path", "/.well-known/q-ledger.json")
+    q_ledger_yaml_path = qcfg.get("q_ledger_yaml_path", "/.well-known/q-ledger.yml")
+    q_metrics_json_path = qcfg.get("q_metrics_json_path", "/.well-known/q-metrics.json")
+    q_metrics_yaml_path = qcfg.get("q_metrics_yaml_path", "/.well-known/q-metrics.yml")
+    q_attest_protocol_path = qcfg.get("q_attest_protocol_path", "/.well-known/q-attest-protocol.md")
+    changelog_path = qcfg.get("changelog_path")
+
+    canonical_url = join_site(site_base, q_metrics_json_path)
+    derived_from_url = join_site(site_base, q_ledger_json_path)
+
+    traceability = {
+        "q_ledger": derived_from_url,
+        "q_ledger_yaml": join_site(site_base, q_ledger_yaml_path),
+        "q_metrics": canonical_url,
+        "q_metrics_yaml": join_site(site_base, q_metrics_yaml_path),
+        "q_attest_protocol": join_site(site_base, q_attest_protocol_path),
+    }
+    if changelog_path:
+        traceability["changelog"] = join_site(site_base, changelog_path)
+
     q_metrics = {
         "schemaVersion": "0.1.0",
         "type": "QMetrics",
-        "site": ledger.get("site", "https://gautierdorval.com/"),
-        "canonical": "https://gautierdorval.com/.well-known/q-metrics.json",
-        "derived_from": [
-            "https://gautierdorval.com/.well-known/q-ledger.json"
-        ],
+        "site": site_url,
+        "canonical": canonical_url,
+        "derived_from": [derived_from_url],
         "purpose": "Publish non-normative, derived observability metrics from Q-Ledger to make interpretive governance behavior measurable, reproducible, and contestable. This file does not grant response authorization and does not define truth. Q-Layer remains authoritative for response legitimacy.",
         "non_normative_notice": "Metrics are descriptive. They must not be treated as authorization, compliance, certification, or guarantees.",
-        "disclosure_token": "GD-IG-GOVERNED",
+        "disclosure_token": disclosure_token,
         "metric_config": {
             "time_window_days": (scope or {}).get("window_days", 7),
             "session_window_minutes": (scope or {}).get("session_window_minutes", 30),
@@ -449,12 +480,7 @@ def compute_q_metrics(ledger: Dict[str, Any], scope: Optional[Dict[str, Any]]) -
             "rates": rates,
             "notes": notes
         },
-        "traceability": {
-            "q_ledger": "https://gautierdorval.com/.well-known/q-ledger.json",
-            "q_ledger_yaml": "https://gautierdorval.com/.well-known/q-ledger.yml",
-            "q_attest_protocol": "https://gautierdorval.com/.well-known/q-attest-protocol.md",
-            "changelog": "https://gautierdorval.com/changelog-ai.md"
-        },
+        "traceability": traceability,
         "last_reviewed": datetime.now(timezone.utc).date().isoformat(),
         "stability": "high"
     }
@@ -473,7 +499,14 @@ def main():
     out_qmetrics = sys.argv[4] if len(sys.argv) >= 5 else "out/q-metrics.json"
     out_qmetrics_yaml = sys.argv[5] if len(sys.argv) >= 6 else "out/q-metrics.yml"
 
-    scope_path = os.environ.get("GOVERNANCE_SCOPE_PATH", "config/governance_scope.json")
+    cfg_path = resolve_config_path(None)
+    cfg = load_json(cfg_path) if cfg_path else {}
+
+    legacy_scope = os.environ.get("GOVERNANCE_SCOPE_PATH", "").strip() or None
+    scope_path = (
+        resolve_existing_file([legacy_scope, resolve_scope_path(None)], label="governance scope")
+        or "config/governance_scope.example.json"
+    )
     scope = load_scope(scope_path)
 
     ledger = load_json(ledger_path)
@@ -524,6 +557,13 @@ def main():
     md.append("# q-ledger metrics")
     md.append("")
     md.append(f"- Generated: `{gen}`")
+
+    input_stats = ledger.get("input_stats", {})
+    if isinstance(input_stats, dict) and input_stats:
+        md.append(
+            f"- CSV rows: total={input_stats.get('rows_total')} | loaded={input_stats.get('rows_loaded')} | skipped={input_stats.get('rows_skipped')}"
+        )
+
     md.append(f"- Ledger sequence: `{seq}`")
     md.append(f"- Hash: `{h}`")
     md.append(f"- Previous hash: `{prev}`")
@@ -604,7 +644,7 @@ def main():
         json.dump(metrics_obj, f, ensure_ascii=False, indent=2)
 
     # Q-metrics outputs
-    q_metrics = compute_q_metrics(ledger, scope)
+    q_metrics = compute_q_metrics(ledger, scope, cfg)
 
     os.makedirs(os.path.dirname(out_qmetrics), exist_ok=True)
     with open(out_qmetrics, "w", encoding="utf-8") as f:
@@ -620,6 +660,56 @@ def main():
     print(f"OK: wrote {out_qmetrics_yaml}")
     print(f"Legacy regime: {regime} | {rationale}")
 
+def resolve_existing_file(candidates: List[str], *, label: str) -> Optional[str]:
+    for p in candidates:
+        if not p:
+            continue
+        if os.path.isfile(p):
+            return p
+    return None
+
+
+def resolve_config_path(cli_path: Optional[str] = None) -> Optional[str]:
+    env_path = os.environ.get("Q_LEDGER_CONFIG_PATH", "").strip() or None
+    return resolve_existing_file(
+        [
+            cli_path,
+            env_path,
+            "config/config.local.json",
+            "config/config.json",
+            "config/config.example.json",
+        ],
+        label="config",
+    )
+
+
+def resolve_scope_path(cli_path: Optional[str] = None) -> Optional[str]:
+    env_path = os.environ.get("Q_LEDGER_SCOPE_PATH", "").strip() or None
+    return resolve_existing_file(
+        [
+            cli_path,
+            env_path,
+            "config/governance_scope.local.json",
+            "config/governance_scope.json",
+            "config/governance_scope.example.json",
+        ],
+        label="governance scope",
+    )
+
+
+def normalize_site_base(site: str) -> str:
+    site = (site or "").strip()
+    if not site:
+        return ""
+    return site.rstrip("/")
+
+
+def join_site(site_base: str, path: str) -> str:
+    if not site_base:
+        return path
+    if not path.startswith("/"):
+        path = "/" + path
+    return site_base + path
 
 if __name__ == "__main__":
     main()

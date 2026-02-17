@@ -23,7 +23,30 @@ Assert-Path "scripts\build_ledger.py"
 Assert-Path "scripts\metrics.py"
 Assert-Path "scripts\archive.ps1"
 Assert-Path "scripts\publish.ps1"
-Assert-Path "config\config.json"
+# Config resolution
+$ConfigCandidates = @("config\config.local.json","config\config.json","config\config.example.json")
+$ConfigPath = $null
+foreach ($c in $ConfigCandidates) {
+  if (Test-Path -LiteralPath $c) { $ConfigPath = $c; break }
+}
+if (-not $ConfigPath) {
+  Fail "No config file found. Expected one of: config\config.local.json, config\config.json, config\config.example.json"
+}
+$env:Q_LEDGER_CONFIG_PATH = $ConfigPath
+Info ("Using config: " + $ConfigPath)
+
+$ScopeCandidates = @("config\governance_scope.local.json","config\governance_scope.json","config\governance_scope.example.json")
+$ScopePath = $null
+foreach ($c in $ScopeCandidates) {
+  if (Test-Path -LiteralPath $c) { $ScopePath = $c; break }
+}
+if ($ScopePath) {
+  $env:Q_LEDGER_SCOPE_PATH = $ScopePath
+  Info ("Using scope: " + $ScopePath)
+} else {
+  Warn "No governance scope file found. Path categorization will be limited."
+}
+
 
 if (-not (Test-Path -LiteralPath ".venv\Scripts\python.exe")) {
   Warn "Virtualenv not found at .venv. If you use a different venv, ensure python points to the right interpreter."

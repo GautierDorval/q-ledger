@@ -49,3 +49,5 @@ Read-Host "Press Enter when pasted to finish"
 Write-Host ""
 Write-Host "OK - publish completed (clipboard)." -ForegroundColor Green
 Write-Host ""
+
+Write-Host "Next recommended step: run .\scripts\verify-publication.ps1 to confirm the public endpoints match your local outputs." -ForegroundColor DarkGray
